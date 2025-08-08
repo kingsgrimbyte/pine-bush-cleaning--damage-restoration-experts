@@ -4,15 +4,16 @@ import subdomainUrl from "@/components/Content/subDomainUrlContent.json";
 
 export async function GET(req: NextRequest) {
   try {
+    // Fetch base URL from contentData or use a default
     const baseUrl = contentData.baseUrl || "https://example.com/";
     const subDomains = subdomainUrl ? Object.keys(subdomainUrl) : [];
 
-    // Extract the subdomain from the host
+    // Extract the subdomain from the host header
     const host = req.headers.get("host") || "";
     const subdomainMatch = host.split(".")[0];
     const isSubdomain = subDomains.includes(subdomainMatch);
 
-    // Define main pages allowed for each subdomain
+    // Define the main pages that are allowed for each subdomain
     const mainPages = [
       "/services",
       "/about",
@@ -21,7 +22,7 @@ export async function GET(req: NextRequest) {
       "/our-brands",
     ];
 
-    // Generate allowed paths for subdomains and their main pages
+    // Generate allowed paths for subdomains and their respective main pages
     const subdomainAllowPaths = subDomains.flatMap((subdomain) => [
       `/${subdomain}`,
       ...mainPages.map((page) => `/${subdomain}${page}`),
@@ -50,9 +51,9 @@ export async function GET(req: NextRequest) {
       ...subDomains.map((subdomain) => `/${subdomain}/${subdomain}`),
     ];
 
-    // If the request is for a subdomain, adjust the allow/disallow paths
+    // Adjust the allow and disallow paths if on a subdomain
     if (isSubdomain) {
-      allow = ["/", ...mainPages];
+      allow = ["/", ...mainPages]; // Allow only main pages on subdomains
       disallow = [
         "/private/",
         "/api/",
@@ -63,26 +64,27 @@ export async function GET(req: NextRequest) {
       ];
     }
 
-    // Build the robots.txt content dynamically
+    // Construct the robots.txt content dynamically
     const robotsTxt = [
-      `User-agent: *`,
-      ...allow.map((path) => `Allow: ${path}`),
-      ...disallow.map((path) => `Disallow: ${path}`),
-      `Sitemap: ${baseUrl}sitemap.xml`,
-      `Host: ${baseUrl}`,
+      `User-agent: *`,  // Apply rules to all user agents
+      ...allow.map((path) => `Allow: ${path}`),  // Add allowed paths
+      ...disallow.map((path) => `Disallow: ${path}`),  // Add disallowed paths
+      `Sitemap: ${baseUrl}sitemap.xml`,  // Point to the sitemap
+      `Host: ${baseUrl}`,  // Specify the base host URL
     ].join("\n");
 
+    // Return the robots.txt file
     return new NextResponse(robotsTxt, {
       headers: { "Content-Type": "text/plain" },
     });
   } catch (error) {
-    // Log the error and return a fallback robots.txt in case of failure
+    // Catch errors and return a fallback robots.txt if an issue occurs
     console.error("Error generating robots.txt:", error);
 
     const fallback = `User-agent: *\nDisallow:`;
     return new NextResponse(fallback, {
       headers: { "Content-Type": "text/plain" },
-      status: 200,
+      status: 500,  // Internal Server Error in case of failure
     });
   }
 }
