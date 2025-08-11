@@ -6,6 +6,7 @@ import Service from "@/app/components/Home/Service";
 import contactContent from "@/app/Data/content";
 
 const ContactInfo: any = contactContent.contactContent;
+const home: any = contactContent.homePageContent;
 
 import Faq from "@/app/components/Home/Faq";
 import HourCta from "@/app/components/Home/HourCta";
@@ -131,7 +132,6 @@ export default function SubdomainPage({ params }: SubdomainPageProps) {
     "@context": "https://schema.org",
     "@graph": [
       {
-        "@context": "https://schema.org",
         "@type": "LocalBusiness",
         name: `${ContactInfo.name}`,
         image: `${ContactInfo.logoImage}`,
@@ -164,7 +164,6 @@ export default function SubdomainPage({ params }: SubdomainPageProps) {
         },
       },
       {
-        "@context": "https://schema.org",
         "@type": "Product",
         name: `${ContactInfo.service} in ${ContentData?.name}, ${abbrevations.toUpperCase()}`,
         brand: {
@@ -182,6 +181,17 @@ export default function SubdomainPage({ params }: SubdomainPageProps) {
           reviewCount: 7,
           ratingValue: 4.802,
         },
+      },
+      {
+        "@type": "FAQPage",
+        mainEntity: home?.faq.slice(0, 5).map((faq:any) => ({
+          "@type": "Question",
+          name: faq?.FAQ?.split("[location]").join(State),
+          acceptedAnswer: {
+            "@type": "Answer",
+            text: faq?.Answer?.split("[location]").join(State),
+          },
+        })),
       },
     ],
   };
