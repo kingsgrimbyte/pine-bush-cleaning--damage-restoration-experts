@@ -184,7 +184,7 @@ export default function SubdomainPage({ params }: SubdomainPageProps) {
       },
       {
         "@type": "FAQPage",
-        mainEntity: home?.faq.slice(0, 5).map((faq:any) => ({
+        mainEntity: home.faq.slice(0, 5).map((faq: any) => ({
           "@type": "Question",
           name: faq?.FAQ?.split("[location]").join(State),
           acceptedAnswer: {
