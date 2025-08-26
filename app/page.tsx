@@ -26,11 +26,8 @@ export default function Home() {
       .split("[phone]")
       .join(ContactInfo.No),
   );
-
- 
   return (
     <div className="">
-     
       <Hero />
     </div>
   );

@@ -20,11 +20,10 @@ const content: any = SubdomainContent.subdomainData;
 const Hero = () => {
   const cityData: any = content;
   const slugs: any = Object.keys(cityData).map((key) => cityData[key]);
-
   const jsonLd = {
     "@context": "https://schema.org",
     "@type": "FAQPage",
-    mainEntity: homeData.faq.slice(0, 5).map((faq: any) => ({
+    mainEntity: homeData.faq.map((faq: any) => ({
       "@type": "Question",
       name: faq?.FAQ?.split("[location]").join(
         ContactInfo.location.split(",")[0].trim(),
@@ -166,7 +165,7 @@ const Hero = () => {
           <div className="mt-14 md:mt-20"></div>
           {/* CTA */}
           {/* FAQ */}
-          <Faq />
+           <Faq data={homeData?.faq}/>
           {/* FAQ */}
           {/* Review */}
           <ReviewWidget />
